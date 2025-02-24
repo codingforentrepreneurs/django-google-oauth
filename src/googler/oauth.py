@@ -1,7 +1,10 @@
 from urllib.parse import urljoin, urlencode
 from django.conf import settings
+from django.core.cache import cache
 
 from . import security
+
+GOOGLE_AUTH_CACHE_KEY_PREFIX = "google:auth:state"
 
 def get_google_oauth_callback_url(drop_https=False, force_https=False):
     url =  urljoin(settings.BASE_URL, settings.GOOGLE_AUTH_CALLBACK_PATH)
@@ -19,6 +22,12 @@ def generate_auth_url():
 
     # private, public
     code_verifier, code_challenge = security.generate_pkce_pair()
+    # request.session['some_val'] = code_verifier
+
+    cache_key = f"{GOOGLE_AUTH_CACHE_KEY_PREFIX}:{state}"
+    # use redis caching key-val
+    cache.set(cache_key, code_verifier, 300)
+    # cache.get(cache_key)
 
     # google cloud auth platform client id
     google_auth_client_id = None
