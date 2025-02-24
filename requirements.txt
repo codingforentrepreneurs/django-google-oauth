@@ -1,0 +1,5 @@
+Django
+python-decouple
+google-auth
+google-auth-oauthlib
+google-auth-httplib2

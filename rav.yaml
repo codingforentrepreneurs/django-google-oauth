@@ -1,0 +1,4 @@
+scripts:
+  dev:
+    - cd src
+    - python manage.py runserver
