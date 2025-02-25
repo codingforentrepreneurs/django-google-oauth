@@ -11,4 +11,11 @@ def google_login_redirect_view(request):
 
 def google_login_callback_view(request):
     print(request.GET)
+    state = request.GET.get('state')
+    code = request.GET.get('code')
+    try:
+        token_json = oauth.verify_google_oauth_callback(state, code)
+    except Exception as e:
+        return HttpResponse(f"{e}", status=400)
+    print(token_json)
     return HttpResponse("Now a user callback")

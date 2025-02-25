@@ -1,4 +1,5 @@
 Django
+requests
 python-decouple
 google-auth
 google-auth-oauthlib

@@ -2,6 +2,8 @@ from urllib.parse import urljoin, urlencode
 from django.conf import settings
 from django.core.cache import cache
 
+import requests
+
 from . import security
 
 GOOGLE_AUTH_CACHE_KEY_PREFIX = "google:auth:state"
@@ -28,7 +30,7 @@ def generate_auth_url():
 
     cache_key = f"{GOOGLE_AUTH_CACHE_KEY_PREFIX}:{state}"
     # use redis caching key-val
-    cache.set(cache_key, code_verifier, 300)
+    cache.set(cache_key, code_verifier, 30)
     # cache.get(cache_key)
 
     # google cloud auth platform client id
@@ -55,7 +57,22 @@ def generate_auth_url():
     return urljoin(google_oauth_url, f"?{encoded_params}")
 
 
-def verify_google_oauth_callback(state):
+def verify_google_oauth_callback(state, code):
+    redirect_uri = get_google_oauth_callback_url()
     cache_key = f"{GOOGLE_AUTH_CACHE_KEY_PREFIX}:{state}"
     code_verifier = cache.get(cache_key)
-    pass
+    if code_verifier is None or code is None or state is None:
+        raise Exception("Invalid code or expired code.")
+
+    token_endpoint = "https://oauth2.googleapis.com/token"
+    token_data = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "client_secret": GOOGLE_SECRET_KEY,
+        "redirect_uri": redirect_uri,
+        "grant_type": "authorization_code",
+        "code": code,
+        "code_verifier": code_verifier,
+    }
+    r = requests.post(token_endpoint, data=token_data)
+    r.raise_for_status()
+    return r.json()
