@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
-from . import oauth
+from . import oauth, services
 # 
 
 def google_login_redirect_view(request):
@@ -19,5 +19,6 @@ def google_login_callback_view(request):
         return HttpResponse(f"{e}", status=400)
     # print(token_json)
     google_user_info = oauth.verify_token_json(token_json)
-    print(google_user_info)
+    user = services.get_or_create_google_user(google_user_info)
+    print(user)
     return HttpResponse("Now a user callback")
