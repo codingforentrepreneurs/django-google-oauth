@@ -53,6 +53,7 @@ def generate_auth_url():
         "code_challenge": code_challenge,
         "code_challenge_method": "S256",
         "access_type": "offline",
+        # "prompt": "consent",
         # "prompt": "select_account",
     }
     encoded_params = urlencode(auth_params)
