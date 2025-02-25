@@ -5,6 +5,8 @@ from django.core.cache import cache
 from . import security
 
 GOOGLE_AUTH_CACHE_KEY_PREFIX = "google:auth:state"
+GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
+GOOGLE_SECRET_KEY = settings.GOOGLE_SECRET_KEY
 
 def get_google_oauth_callback_url(drop_https=False, force_https=False):
     url =  urljoin(settings.BASE_URL, settings.GOOGLE_AUTH_CALLBACK_PATH)
@@ -30,7 +32,7 @@ def generate_auth_url():
     # cache.get(cache_key)
 
     # google cloud auth platform client id
-    google_auth_client_id = None
+    google_auth_client_id = GOOGLE_CLIENT_ID
 
     scope = " ".join([
         "openid",
@@ -51,3 +53,9 @@ def generate_auth_url():
     encoded_params = urlencode(auth_params)
     google_oauth_url = "https://accounts.google.com/o/oauth2/v2/auth"
     return urljoin(google_oauth_url, f"?{encoded_params}")
+
+
+def verify_google_oauth_callback(state):
+    cache_key = f"{GOOGLE_AUTH_CACHE_KEY_PREFIX}:{state}"
+    code_verifier = cache.get(cache_key)
+    pass

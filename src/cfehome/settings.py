@@ -9,13 +9,16 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-BASE_URL = "http://localhost:8000/"
+BASE_URL = config('BASE_URL', cast=str, default="http://127.0.0.1:8000/")
 GOOGLE_AUTH_CALLBACK_PATH = "/google/callback/"
+GOOGLE_CLIENT_ID= config('GOOGLE_CLIENT_ID', cast=str, default="")
+GOOGLE_SECRET_KEY= config('GOOGLE_SECRET_KEY', cast=str, default="")
 
 
 # Quick-start development settings - unsuitable for production
