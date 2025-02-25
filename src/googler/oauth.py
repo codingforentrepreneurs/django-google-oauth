@@ -1,6 +1,8 @@
 from urllib.parse import urljoin, urlencode
 from django.conf import settings
 from django.core.cache import cache
+from google.auth.transport import requests as google_requests
+from google.oauth2 import id_token
 
 import requests
 
@@ -51,6 +53,7 @@ def generate_auth_url():
         "code_challenge": code_challenge,
         "code_challenge_method": "S256",
         "access_type": "offline",
+        # "prompt": "select_account",
     }
     encoded_params = urlencode(auth_params)
     google_oauth_url = "https://accounts.google.com/o/oauth2/v2/auth"
@@ -76,3 +79,16 @@ def verify_google_oauth_callback(state, code):
     r = requests.post(token_endpoint, data=token_data)
     r.raise_for_status()
     return r.json()
+
+
+def verify_token_json(token_json):
+    id_token_jwt = token_json.get('id_token')
+    google_user_info = id_token.verify_oauth2_token(
+        id_token_jwt, google_requests.Request(), GOOGLE_CLIENT_ID
+    )
+    if google_user_info["iss"] not in [
+        "accounts.google.com",
+        "https://accounts.google.com",
+    ]:
+        raise Exception("Invalid issuer")
+    return google_user_info
