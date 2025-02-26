@@ -21,6 +21,6 @@ from googler import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('google/login/', views.google_login_redirect_view, name='google-login'),
+    path('google/login/', views.google_login_view, name='google-login'),
     path('google/callback/', views.google_login_callback_view, name='google-callback'),
 ]

@@ -1,12 +1,19 @@
+from django.conf import settings
+from django.contrib.auth import login
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 from . import oauth, services
+
+LOGIN_REDIRECT_URL = settings.LOGIN_REDIRECT_URL
 # 
 
-def google_login_redirect_view(request):
-    google_oauth2_url = oauth.generate_auth_url()
-    return redirect(google_oauth2_url)
+def google_login_view(request):
+    if request.method == "POST":
+        # csrf_token security
+        google_oauth2_url = oauth.generate_auth_url()
+        return redirect(google_oauth2_url)
+    return render(request, "googler/login.html", {})
 
 
 def google_login_callback_view(request):
@@ -17,10 +24,9 @@ def google_login_callback_view(request):
         token_json = oauth.verify_google_oauth_callback(state, code)
     except Exception as e:
         return HttpResponse(f"{e}", status=400)
-    # print(token_json)
     google_user_info = oauth.verify_token_json(token_json)
     user = services.get_or_create_google_user(google_user_info)
     # save_google_auth_tokens(user, google_user_info, token_json)
-    print(user)
-    return HttpResponse("Now a user callback")
+    login(request, user)
+    return redirect(LOGIN_REDIRECT_URL)
 
