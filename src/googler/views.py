@@ -22,3 +22,4 @@ def google_login_callback_view(request):
     user = services.get_or_create_google_user(google_user_info)
     print(user)
     return HttpResponse("Now a user callback")
+

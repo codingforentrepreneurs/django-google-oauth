@@ -41,7 +41,7 @@ def generate_auth_url():
     scope = " ".join([
         "openid",
         "email", 
-        "profile"
+        "profile",
     ])
 
     auth_params = {
