@@ -15,12 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
-from googler import views
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('google/login/', views.google_login_view, name='google-login'),
-    path('google/callback/', views.google_login_callback_view, name='google-callback'),
+    path('google/', include('googler.urls')),
 ]

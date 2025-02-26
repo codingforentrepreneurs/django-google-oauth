@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.cache import cache
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
+from django.urls import reverse
 
 import requests
 
@@ -12,8 +13,14 @@ GOOGLE_AUTH_CACHE_KEY_PREFIX = "google:auth:state"
 GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
 GOOGLE_SECRET_KEY = settings.GOOGLE_SECRET_KEY
 
+
+def get_google_auth_callback_path():
+    return reverse("googler:callback")
+
+
 def get_google_oauth_callback_url(drop_https=False, force_https=False):
-    url =  urljoin(settings.BASE_URL, settings.GOOGLE_AUTH_CALLBACK_PATH)
+    callback_path = getattr(settings, 'GOOGLE_AUTH_CALLBACK_PATH', None) or get_google_auth_callback_path()
+    url =  urljoin(settings.BASE_URL, callback_path)
     if drop_https:
         url = url.replace("https://", "http://")
     if force_https:
