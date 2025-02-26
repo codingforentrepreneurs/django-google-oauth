@@ -16,7 +16,9 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_URL = config('BASE_URL', cast=str, default="http://127.0.0.1:8000/")
-GOOGLE_AUTH_CALLBACK_PATH = "/googleasdfs/callback/"
+# GOOGLE_AUTH_CALLBACK_PATH = "/google/callback/"
+
+# pip install django-googler
 GOOGLE_CLIENT_ID= config('GOOGLE_CLIENT_ID', cast=str, default="")
 GOOGLE_SECRET_KEY= config('GOOGLE_SECRET_KEY', cast=str, default="")
 
