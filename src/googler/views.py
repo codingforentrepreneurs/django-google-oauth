@@ -20,6 +20,7 @@ def google_login_callback_view(request):
     # print(token_json)
     google_user_info = oauth.verify_token_json(token_json)
     user = services.get_or_create_google_user(google_user_info)
+    # save_google_auth_tokens(user, google_user_info, token_json)
     print(user)
     return HttpResponse("Now a user callback")
 
